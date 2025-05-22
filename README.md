@@ -32,17 +32,21 @@ El proyecto está compuesto por:
 - Validación de número de cuenta único
 - Menú interactivo con control de errores e intentos
 - Operaciones de:
+  --> con dato de entrada (numero de cuenta)
+  -->  antes de modificar datos (mostrando nombre del cliente)
   - Depósito
   - Giro
   - Consulta de saldo
   - Visualización de datos
-- Confirmación antes de modificar datos (mostrando nombre del cliente)
 
 ---
 
 ## 🔧 Sugerencias de mejoras futuras
 
 Estas ideas pueden ser desarrolladas en las próximas entregas incrementales del proyecto:
+
+  **Mejorar "Visualizar Datos cliente"**
+- buscar datos con rut, nombre 
 
 . **Control de errores más robusto**
 - Validar que el número de cuenta tenga exactamente 9 dígitos.
