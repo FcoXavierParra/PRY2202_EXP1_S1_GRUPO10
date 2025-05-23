@@ -23,6 +23,9 @@ Muestra el saldo actual de una cuenta especificada por su número.
 6. Salir
 Termina la ejecución del programa.
 
+# Pontenciales Mejoras Funcionales
+1. Opciones de Filtro de Datos de Cliente por Nombre o Apellidos.
+
 # Validaciones Implementadas
 
 1. Validación de RUT Chileno
@@ -52,6 +55,12 @@ Para depósitos y giros:
 Se exige que el monto sea mayor que cero.
 
 En giros, se valida que el saldo disponible sea suficiente.
+
+# Validaciones Pendientes
+
+1. Datos Personales
+   No se valida estructura o formato de: Nombre, Apellidos, Telefono, Edad.
+
 
 ## 📚 Créditos
 
