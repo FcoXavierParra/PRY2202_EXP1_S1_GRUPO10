@@ -5,25 +5,26 @@ Este proyecto simula un sistema básico de gestión de cuentas bancarias para la
 **Opciones del Menú**
 Al ejecutar el programa, se despliega el siguiente menú:
 
-#Registrar cliente
+1. Registrar cliente
 Permite ingresar los datos de un nuevo cliente, incluyendo nombre, RUT y creación de una cuenta bancaria. El sistema valida que el RUT ingresado tenga el formato correcto y sea válido según el dígito verificador.
 
-#Ver datos de cliente
+2. Ver datos de cliente
 Solicita el número de cuenta y muestra los datos del cliente asociado, si existe.
 
-#Depositar
+3. Depositar
 Permite ingresar un monto a depositar en la cuenta de un cliente, identificado por su número de cuenta. El sistema valida que el monto sea positivo y que la cuenta exista.
 
-#Girar
+4. Girar
 Permite retirar dinero de la cuenta de un cliente. Se verifica que la cuenta exista, que el monto sea positivo y que haya suficiente saldo disponible.
 
-#Consultar saldo
+5. Consultar saldo
 Muestra el saldo actual de una cuenta especificada por su número.
 
-#Salir
+6. Salir
 Termina la ejecución del programa.
 
-**Validaciones Implementadas**
+# Validaciones Implementadas
+
 1. Validación de RUT Chileno
 Se implementa una función para verificar si el RUT ingresado es válido, considerando:
 
