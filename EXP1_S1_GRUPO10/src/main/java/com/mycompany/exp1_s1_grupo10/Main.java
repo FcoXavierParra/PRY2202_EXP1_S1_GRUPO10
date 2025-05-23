@@ -11,55 +11,6 @@ import java.util.Scanner;
 
 public class Main {
 
-   
-    public static boolean validarRut(String rutFormateado) {
-    // Validar formato con puntos como separadores de miles
-    if (!rutFormateado.matches("^\\d{1,3}(\\.\\d{3})*-?[\\dkK]$")) {
-        return false;
-    }
-
-    // Eliminar puntos y separar en número y dígito verificador
-    String rutSinPuntos = rutFormateado.replace(".", "");
-    String[] partes = rutSinPuntos.split("-");
-    if (partes.length != 2) return false;
-
-    String numero = partes[0];
-    String dvIngresado = partes[1].toUpperCase();
-
-    int suma = 0;
-    int factor = 2;
-    for (int i = numero.length() - 1; i >= 0; i--) {
-        suma += Character.getNumericValue(numero.charAt(i)) * factor;
-        factor = (factor == 7) ? 2 : factor + 1;
-    }
-
-    int residuo = 11 - (suma % 11);
-    String dvCalculado = switch (residuo) {
-        case 11 -> "0";
-        case 10 -> "K";
-        default -> String.valueOf(residuo);
-    };
-
-    return dvIngresado.equals(dvCalculado);
-    }
-
-    public static Cliente buscarClientePorCuenta(ArrayList<Cliente> clientes, int numCuenta) {
-        for (Cliente c : clientes) {
-            if (c.getCuenta().getNumeroCuenta() == numCuenta) {
-                return c;
-            }
-        }
-        return null;
-    }
-    
-    public static Cliente buscarClientePorRUT(ArrayList<Cliente> clientes, String rut) {
-    for (Cliente cliente : clientes) {
-        if (cliente.getRut().equalsIgnoreCase(rut)) {
-            return cliente;
-        }
-    }
-    return null;
-}
 
 public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
@@ -305,4 +256,54 @@ case 4 -> {
         }
     }
 }
+
+    public static boolean validarRut(String rutFormateado) {
+    // Validar formato con puntos como separadores de miles
+    if (!rutFormateado.matches("^\\d{1,3}(\\.\\d{3})*-?[\\dkK]$")) {
+        return false;
+    }
+
+    // Eliminar puntos y separar en número y dígito verificador
+    String rutSinPuntos = rutFormateado.replace(".", "");
+    String[] partes = rutSinPuntos.split("-");
+    if (partes.length != 2) return false;
+
+    String numero = partes[0];
+    String dvIngresado = partes[1].toUpperCase();
+
+    int suma = 0;
+    int factor = 2;
+    for (int i = numero.length() - 1; i >= 0; i--) {
+        suma += Character.getNumericValue(numero.charAt(i)) * factor;
+        factor = (factor == 7) ? 2 : factor + 1;
+    }
+
+    int residuo = 11 - (suma % 11);
+    String dvCalculado = switch (residuo) {
+        case 11 -> "0";
+        case 10 -> "K";
+        default -> String.valueOf(residuo);
+    };
+
+    return dvIngresado.equals(dvCalculado);
+    }
+
+    public static Cliente buscarClientePorCuenta(ArrayList<Cliente> clientes, int numCuenta) {
+        for (Cliente c : clientes) {
+            if (c.getCuenta().getNumeroCuenta() == numCuenta) {
+                return c;
+            }
+        }
+        return null;
+    }
+    
+    public static Cliente buscarClientePorRUT(ArrayList<Cliente> clientes, String rut) {
+    for (Cliente cliente : clientes) {
+        if (cliente.getRut().equalsIgnoreCase(rut)) {
+            return cliente;
+        }
+    }
+    return null;
+}
+
 }
