@@ -23,7 +23,7 @@ public class Cuenta {
         return saldo;
     }
 
-    public void depositar(int monto) {
+    public void depositar(double monto) {
         if (monto > 0) {
             saldo += monto;
             System.out.println("¡Depósito realizado de manera exitosa!");
@@ -33,7 +33,7 @@ public class Cuenta {
         }
     }
 
-    public void girar(int monto) {
+    public void girar(double monto) {
         if (monto <= 0) {
             System.out.println("El monto debe ser mayor a cero.");
         } else if (monto > saldo) {

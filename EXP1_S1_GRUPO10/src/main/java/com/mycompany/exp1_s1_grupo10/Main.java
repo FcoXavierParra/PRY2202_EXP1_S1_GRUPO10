@@ -11,32 +11,36 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static boolean validarRut(String rutCompleto) {
-        // Formato esperado: XXXXXXXX-Y (sin puntos, con guion)
-        if (!rutCompleto.matches("^\\d{7,8}-[\\dkK]$")) {
-            return false;
-        }
+   
+    public static boolean validarRut(String rutFormateado) {
+    // Validar formato con puntos como separadores de miles
+    if (!rutFormateado.matches("^\\d{1,3}(\\.\\d{3})*-?[\\dkK]$")) {
+        return false;
+    }
 
-        String[] partes = rutCompleto.split("-");
-        String numero = partes[0];
-        String dvIngresado = partes[1].toUpperCase();
+    // Eliminar puntos y separar en número y dígito verificador
+    String rutSinPuntos = rutFormateado.replace(".", "");
+    String[] partes = rutSinPuntos.split("-");
+    if (partes.length != 2) return false;
 
-        int suma = 0;
-        int factor = 2;
-        for (int i = numero.length() - 1; i >= 0; i--) {
-            suma += Character.getNumericValue(numero.charAt(i)) * factor;
-            factor = (factor == 7) ? 2 : factor + 1;
-        }
+    String numero = partes[0];
+    String dvIngresado = partes[1].toUpperCase();
 
-        int residuo = 11 - (suma % 11);
-        String dvCalculado;
-        dvCalculado = switch (residuo) {
-            case 11 -> "0";
-            case 10 -> "K";
-            default -> String.valueOf(residuo);
-        };
+    int suma = 0;
+    int factor = 2;
+    for (int i = numero.length() - 1; i >= 0; i--) {
+        suma += Character.getNumericValue(numero.charAt(i)) * factor;
+        factor = (factor == 7) ? 2 : factor + 1;
+    }
 
-        return dvIngresado.equals(dvCalculado);
+    int residuo = 11 - (suma % 11);
+    String dvCalculado = switch (residuo) {
+        case 11 -> "0";
+        case 10 -> "K";
+        default -> String.valueOf(residuo);
+    };
+
+    return dvIngresado.equals(dvCalculado);
     }
 
     public static Cliente buscarClientePorCuenta(ArrayList<Cliente> clientes, int numCuenta) {
@@ -47,8 +51,17 @@ public class Main {
         }
         return null;
     }
+    
+    public static Cliente buscarClientePorRUT(ArrayList<Cliente> clientes, String rut) {
+    for (Cliente cliente : clientes) {
+        if (cliente.getRut().equalsIgnoreCase(rut)) {
+            return cliente;
+        }
+    }
+    return null;
+}
 
-    public static void main(String[] args) {
+public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             ArrayList<Cliente> clientes = new ArrayList<>();
             int intentos = 0;
@@ -83,128 +96,213 @@ public class Main {
                 
                 switch (opcion) {
                     case 1 -> {
-                        int rutIntentos = 0;
-                        boolean rutValido = false;
-                        String rut = "";
-                        while (rutIntentos < 2) {
-                            System.out.print("Ingrese Rut (sin puntos, con guion): ");
-                            rut = scanner.nextLine();
-                            if (validarRut(rut)) {
-                                rutValido = true;
-                                break;
-                            } else {
-                                System.out.println("RUT inválido. Verifique formato y dígito verificador.");
-                                rutIntentos++;
-                            }
-                        }
-                        if (!rutValido) {
-                            System.out.println("Demasiados intentos inválidos. Volviendo al menú principal.");
-                            break;
-                        }
-                        
-                        System.out.print("Ingrese nombre: ");
-                        String nombre = scanner.nextLine();
-                        System.out.print("Ingrese apellido paterno: ");
-                        String apellidoP = scanner.nextLine();
-                        System.out.print("Ingrese apellido materno: ");
-                        String apellidoM = scanner.nextLine();
-                        System.out.print("Ingrese domicilio: ");
-                        String domicilio = scanner.nextLine();
-                        System.out.print("Ingrese comuna: ");
-                        String comuna = scanner.nextLine();
-                        System.out.print("Ingrese teléfono: ");
-                        String telefono = scanner.nextLine();
-                        System.out.print("Ingrese número de cuenta (9 dígitos): ");
-                        int numCuenta = scanner.nextInt();
-                        scanner.nextLine();
-                        
-                        if (buscarClientePorCuenta(clientes, numCuenta) != null) {
-                            System.out.println("Número de cuenta ya registrado.");
-                            break;
-                        }
-                        
-                        Cliente nuevoCliente = new Cliente(rut, nombre, apellidoP, apellidoM, domicilio, comuna, telefono, numCuenta);
-                        clientes.add(nuevoCliente);
-                        System.out.println("¡Cliente registrado con éxito!");
-                    }
-                        
-                    case 2 -> {
-                        System.out.print("Ingrese número de cuenta: ");
-                        int cuentaBuscar = scanner.nextInt();
-                        scanner.nextLine();
-                        Cliente cliente2 = buscarClientePorCuenta(clientes, cuentaBuscar);
-                        if (cliente2 != null) {
-                            cliente2.mostrarDatos();
-                        } else {
-                            System.out.println("Cuenta no encontrada.");
-                        }
-                    }
-                        
-                    case 3 -> {
-                        System.out.print("Ingrese número de cuenta: ");
-                        int cuentaDep = scanner.nextInt();
-                        Cliente clienteDep = buscarClientePorCuenta(clientes, cuentaDep);
-                        if (clienteDep != null) {
-                            System.out.println("Cliente: " + clienteDep.getCuenta().getNumeroCuenta());
-                            System.out.println("Nombre: " + clienteDep.getCuenta().getNumeroCuenta());
-                            System.out.print("¿Desea continuar? (s/n): ");
-                            scanner.nextLine();
-                            String confirm = scanner.nextLine();
-                            if (confirm.equalsIgnoreCase("s")) {
-                                System.out.print("Ingrese monto a depositar: ");
-                                int monto = scanner.nextInt();
-                                clienteDep.getCuenta().depositar(monto);
-                            }
-                        } else {
-                            System.out.println("Cuenta no encontrada.");
-                        }
-                    }
-                        
-                    case 4 -> {
-                        System.out.print("Ingrese número de cuenta: ");
-                        int cuentaGiro = scanner.nextInt();
-                        Cliente clienteGiro = buscarClientePorCuenta(clientes, cuentaGiro);
-                        if (clienteGiro != null) {
-                            System.out.println("Nombre: " + clienteGiro.getCuenta().getNumeroCuenta());
-                            System.out.print("¿Desea continuar? (s/n): ");
-                            scanner.nextLine();
-                            String confirm = scanner.nextLine();
-                            if (confirm.equalsIgnoreCase("s")) {
-                                System.out.print("Ingrese monto a girar: ");
-                                int monto = scanner.nextInt();
-                                clienteGiro.getCuenta().girar(monto);
-                            }
-                        } else {
-                            System.out.println("Cuenta no encontrada.");
-                        }
-                    }
-                        
+    int rutIntentos = 0;
+    boolean rutValido = false;
+    String rut = "";
+    while (rutIntentos < 2) {
+        System.out.print("Ingrese Rut (puntos,guion ej: 12.345.678-K): ");
+        rut = scanner.nextLine();
+
+        if (!validarRut(rut)) {
+            System.out.println("RUT inválido.");
+            rutIntentos++;
+        } else {
+            rutValido = true;
+            break;
+        }
+    }
+
+    if (!rutValido) {
+        System.out.println("Demasiados intentos fallidos.");
+        break;
+    }
+
+    Cliente clienteExistente = buscarClientePorRUT(clientes, rut);
+    
+    if (clienteExistente != null) {
+        System.out.println("El cliente ya existe.");
+    } else {
+        System.out.print("Ingrese número de cuenta: ");
+
+        int cuentaIntentos = 0;
+        String cuentaInput = "";
+        boolean cuentaValida = false;
+
+while (cuentaIntentos < 2) {
+    System.out.print("Ingrese número de cuenta (9 dígitos): ");
+    cuentaInput = scanner.nextLine();
+
+    if (!cuentaInput.matches("^\\d{9}$")) {
+        System.out.println("Número de cuenta inválido. Debe tener exactamente 9 dígitos.");
+        cuentaIntentos++;
+    } else {
+        cuentaValida = true;
+        break;
+    }
+}
+
+if (!cuentaValida) {
+    System.out.println("Demasiados intentos fallidos.");
+    break;
+}
+        int numeroCuenta = Integer.parseInt(cuentaInput);
+        System.out.print("Ingrese nombre: ");
+        String nombre = scanner.nextLine();
+        System.out.print("Ingrese apellido paterno: ");
+        String apellidoP = scanner.nextLine();
+        System.out.print("Ingrese apellido materno: ");
+        String apellidoM = scanner.nextLine();
+        System.out.print("Ingrese domicilio: ");
+        String domicilio = scanner.nextLine();
+        System.out.print("Ingrese comuna: ");
+        String comuna = scanner.nextLine();
+        System.out.print("Ingrese teléfono: ");
+        String telefono = scanner.nextLine();
+        System.out.print("Ingrese edad: ");
+        int edad = Integer.parseInt(scanner.nextLine());
+
+        Cliente nuevo = new Cliente(rut, nombre, apellidoP, apellidoM, domicilio, comuna, telefono, edad);
+        nuevo.setCuenta(new Cuenta(numeroCuenta));
+        clientes.add(nuevo);
+
+        System.out.println("Cliente y cuenta creados exitosamente.");
+    }
+} 
+                     case 2 -> {
+                                            int intentos2 = 0;
+                                            Cliente cliente2 = null;
+
+                                            while (intentos2 < 2 && cliente2 == null) {
+                                                System.out.print("Buscar por (1) RUT o (2) Número de cuenta: ");
+                                                int tipoBusqueda = -1;
+                                                try {
+                                                    tipoBusqueda = Integer.parseInt(scanner.nextLine());
+                                                } catch (NumberFormatException e) {
+                                                    System.out.println("Entrada inválida. Debe ingresar 1 o 2.");
+                                                    intentos2++;
+                                                    continue;
+                                                }
+
+                                                if (tipoBusqueda == 1) {
+                                                    System.out.print("Ingrese RUT: ");
+                                                    String rutBuscar = scanner.nextLine();
+                                                    cliente2 = buscarClientePorRUT(clientes, rutBuscar);
+                                                } else if (tipoBusqueda == 2) {
+                                                    System.out.print("Ingrese número de cuenta: ");
+                                                    int cuentaBuscar = Integer.parseInt(scanner.nextLine());
+                                                    cliente2 = buscarClientePorCuenta(clientes, cuentaBuscar);
+                                                } else {
+                                                    System.out.println("Opción inválida. Ingrese 1 o 2.");
+                                                    intentos++;
+                                                    continue;
+                                                }
+
+                                                if (cliente2 != null) {
+                                                } else {
+                                                    intentos2++;
+                                                    if (intentos2 < 2) {
+                                                        System.out.println("Cliente no encontrado. Intente nuevamente.");
+                                                    } else {
+                                                        System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.");
+                                                    }
+                                                }
+                                            }
+
+                                            if (cliente2 != null) {
+                                                cliente2.mostrarDatos();
+                                                break;
+                                            }
+                                        }
+                 case 3 -> {
+    int intentos3 = 0;
+    Cliente cliente = null;
+    while (intentos3 < 2 && cliente == null) {
+        System.out.print("Ingrese número de cuenta: ");
+        int cuentaBuscar = Integer.parseInt(scanner.nextLine());
+        cliente = buscarClientePorCuenta(clientes, cuentaBuscar);
+        if (cliente == null) {
+            intentos3++;
+            if (intentos3 < 2) {
+                System.out.println("Cuenta no encontrada. Intente nuevamente.");
+            } else {
+                System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.");
+            }
+        }
+    }
+    if (cliente != null) {
+        System.out.print("Ingrese el monto a depositar: ");
+        double monto = Double.parseDouble(scanner.nextLine());
+        if (monto <= 0) {
+            System.out.println("El monto debe ser mayor a cero.");
+        } else {
+            cliente.getCuenta().depositar(monto);
+            System.out.println("Depósito exitoso. Saldo actual: " + cliente.getCuenta().getSaldo());
+        }
+    }
+}
+
+case 4 -> {
+    int intentos4 = 0;
+    Cliente cliente = null;
+    while (intentos4 < 2 && cliente == null) {
+        System.out.print("Ingrese número de cuenta: ");
+        int cuentaBuscar = Integer.parseInt(scanner.nextLine());
+        cliente = buscarClientePorCuenta(clientes, cuentaBuscar);
+        if (cliente == null) {
+            intentos4++;
+            if (intentos4 < 2) {
+                System.out.println("Cuenta no encontrada. Intente nuevamente.");
+            } else {
+                System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.");
+            }
+        }
+    }
+    if (cliente != null) {
+        if (cliente.getCuenta().getSaldo() <= 0) {
+            System.out.println("No es posible girar. Saldo insuficiente.");
+        } else {
+            System.out.print("Ingrese el monto a girar: ");
+            double monto = Double.parseDouble(scanner.nextLine());
+            if (monto <= 0) {
+                System.out.println("El monto debe ser mayor a cero.");
+            } else if (monto > cliente.getCuenta().getSaldo()) {
+                System.out.println("No puede girar más del saldo disponible.");
+            } else {
+                cliente.getCuenta().girar(monto);
+                System.out.println("Giro exitoso. Saldo actual: " + cliente.getCuenta().getSaldo());
+            }
+        }
+    }
+}
+
+
                     case 5 -> {
-                        System.out.print("Ingrese número de cuenta: ");
-                        int cuentaSaldo = scanner.nextInt();
-                        Cliente clienteSaldo = buscarClientePorCuenta(clientes, cuentaSaldo);
-                        if (clienteSaldo != null) {
-                            System.out.println("Nombre: " + clienteSaldo.getCuenta().getNumeroCuenta());
-                            System.out.print("¿Desea continuar? (s/n): ");
-                            scanner.nextLine();
-                            String confirm = scanner.nextLine();
-                            if (confirm.equalsIgnoreCase("s")) {
-                                System.out.println("Saldo actual: " + clienteSaldo.getCuenta().getSaldo() + " pesos");
-                            }
-                        } else {
-                            System.out.println("Cuenta no encontrada.");
-                        }
-                    }
-                        
+                                            int intentos5 = 0;
+                                            Cliente cliente = null;
+                                            while (intentos5 < 2 && cliente == null) {
+                                                System.out.print("Ingrese número de cuenta: ");
+                                                int cuentaBuscar = Integer.parseInt(scanner.nextLine());
+                                                cliente = buscarClientePorCuenta(clientes, cuentaBuscar);
+                                                if (cliente == null) {
+                                                    intentos5++;
+                                                    if (intentos5 < 2) {
+                                                        System.out.println("Cuenta no encontrada. Intente nuevamente.");
+                                                    } else {
+                                                        System.out.println("Demasiados intentos fallidos. Volviendo al menú principal.");
+                                                    }
+                                                }
+                                            }
+                                            if (cliente != null) {
+                                                System.out.println("Saldo actual: " + cliente.getCuenta().getSaldo() + " pesos");
+                                            }
+                                        }
                     case 6 -> {
                         System.out.println("Saliendo del sistema...");
                         scanner.close();
                         return;
                     }
-                }
-            }
-            
-            System.out.println("Demasiados intentos inválidos. Cerrando el programa.");
+} 
         }
     }
+}
 }

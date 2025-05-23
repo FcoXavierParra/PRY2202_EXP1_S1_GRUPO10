@@ -35,4 +35,13 @@ public class Cliente {
         System.out.println("Teléfono: " + telefono);
         System.out.println("Cuenta Corriente: " + cuenta.getNumeroCuenta());
     }
+
+    public void setCuenta(Cuenta cuenta) {
+        this.cuenta = cuenta;
+    }
+    
+    public String getRut() {
+    return rut;
+}
+    
 }
