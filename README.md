@@ -67,3 +67,5 @@ En giros, se valida que el saldo disponible sea suficiente.
 Desarrollado como parte de la actividad **Exp1_S1 — Semana 1**  
 Asignatura: *Desarrollo Orientado a Objetos I*  
 Grupo : **10**
+> Benjamin Claros
+> Francisco Parra
